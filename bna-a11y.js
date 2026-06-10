@@ -246,6 +246,10 @@ window.A11yWidgetConfig = {
         }
       }
     } catch (e) { /* localStorage unavailable / private mode */ }
+    // מדריך/מסכת קריאה הם עזרים זמניים שעוקבים אחרי העכבר — שחזורם בטעינת עמוד
+    // משאיר פס כחול "תקוע" על המסך, לכן הם תמיד מתחילים כבויים
+    s.readingGuide = false;
+    s.readingMask = false;
     return s;
   }
 
@@ -512,8 +516,10 @@ window.A11yWidgetConfig = {
       '.scrim{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:2147483646;opacity:0;visibility:hidden;transition:opacity .2s ease}',
       '.scrim.open{opacity:1;visibility:visible}',
       // הפאנל
-      '.panel{position:fixed;bottom:0;' + (CONFIG.position === 'left' ? 'left:0' : 'right:0') + ';top:0;width:380px;max-width:100%;background:#fff;color:#111827;z-index:2147483647;box-shadow:0 0 40px rgba(0,0,0,.3);display:flex;flex-direction:column;transform:translateX(' + (CONFIG.position === 'left' ? '-100%' : '100%') + ');transition:transform .26s cubic-bezier(.22,1,.36,1);direction:' + t('dir') + '}',
-      '.panel.open{transform:translateX(0)}',
+      // visibility:hidden במצב סגור — שלא יציץ צל/פס של הפאנל בקצה המסך בזמן גלילה.
+      // (במהלך אנימציית הסגירה ה-JS משאיר אותו גלוי זמנית דרך style inline)
+      '.panel{position:fixed;bottom:0;' + (CONFIG.position === 'left' ? 'left:0' : 'right:0') + ';top:0;width:380px;max-width:100%;background:#fff;color:#111827;z-index:2147483647;box-shadow:0 0 40px rgba(0,0,0,.3);display:flex;flex-direction:column;visibility:hidden;transform:translateX(' + (CONFIG.position === 'left' ? '-100%' : '100%') + ');transition:transform .26s cubic-bezier(.22,1,.36,1);direction:' + t('dir') + '}',
+      '.panel.open{transform:translateX(0);visibility:visible}',
       // כותרת
       '.head{background:var(--c);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}',
       '.head h2{margin:0;font-size:19px;font-weight:800;display:flex;align-items:center;gap:9px}',
@@ -878,6 +884,7 @@ window.A11yWidgetConfig = {
   function openPanel() {
     isOpen = true;
     lastFocused = document.activeElement;
+    panel.style.visibility = '';
     panel.classList.add('open');
     scrimEl.classList.add('open');
     trigger.setAttribute('aria-expanded', 'true');
@@ -888,6 +895,9 @@ window.A11yWidgetConfig = {
   function closePanel() {
     isOpen = false;
     closeSheet();
+    // נשאר גלוי למשך אנימציית ההחלקה החוצה, ואז מוסתר לחלוטין (כולל הצל)
+    panel.style.visibility = 'visible';
+    setTimeout(function () { if (!isOpen) panel.style.visibility = ''; }, 300);
     panel.classList.remove('open');
     scrimEl.classList.remove('open');
     trigger.setAttribute('aria-expanded', 'false');
