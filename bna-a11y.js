@@ -1,7 +1,7 @@
 /*! BNA — Accessibility widget config (shared across all landing pages).
  *  Edit these values once here; every page that loads this file updates. */
 window.A11yWidgetConfig = {
-  position: 'right',          // 'right' | 'left'
+  position: 'left',           // 'right' | 'left'
   color:    '#1d4ed8',        // BNA brand color — change to your brand (keep AA contrast on white)
   lang:     'he',
   hotkey:   'alt+shift+a',
@@ -503,11 +503,11 @@ window.A11yWidgetConfig = {
       ':host{all:initial}',
       '*{box-sizing:border-box;font-family:Arial,"Helvetica Neue","Segoe UI",sans-serif}',
       '.wrap{--c:' + CONFIG.color + ';--cd:color-mix(in srgb,var(--c) 82%,#000);direction:' + t('dir') + '}',
-      // כפתור ההפעלה
-      '.trigger{position:fixed;bottom:20px;' + (CONFIG.position === 'left' ? 'left' : 'right') + ':20px;width:60px;height:60px;border-radius:50%;background:var(--c);color:#fff;border:0;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;z-index:2147483646;transition:transform .18s ease,box-shadow .18s ease}',
-      '.trigger:hover{transform:scale(1.07)}',
+      // כפתור ההפעלה — קומפקטי ועדין, אך ברור ונגיש (מטרת מגע ≥44px)
+      '.trigger{position:fixed;bottom:18px;' + (CONFIG.position === 'left' ? 'left' : 'right') + ':18px;width:52px;height:52px;border-radius:50%;background:var(--c);color:#fff;border:2px solid rgba(255,255,255,.9);cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;z-index:2147483646;transition:transform .18s ease,box-shadow .18s ease}',
+      '.trigger:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(0,0,0,.3)}',
       '.trigger:focus-visible{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 6px var(--c)}',
-      '.trigger svg{width:34px;height:34px;fill:currentColor}',
+      '.trigger svg{width:28px;height:28px;fill:currentColor}',
       // overlay רקע
       '.scrim{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:2147483646;opacity:0;visibility:hidden;transition:opacity .2s ease}',
       '.scrim.open{opacity:1;visibility:visible}',
@@ -570,7 +570,7 @@ window.A11yWidgetConfig = {
       '.kbrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #eef2f6;font-size:14px}',
       // נגישות התפריט עצמו
       '.tile,.iconbtn,.topbar button,.stepper button{-webkit-tap-highlight-color:transparent}',
-      '@media (max-width:480px){.panel{width:100%;top:auto;height:88vh;border-radius:18px 18px 0 0;transform:translateY(100%)}.panel.open{transform:translateY(0)}.trigger{width:54px;height:54px;bottom:16px}}',
+      '@media (max-width:480px){.panel{width:100%;top:auto;height:88vh;border-radius:18px 18px 0 0;transform:translateY(100%)}.panel.open{transform:translateY(0)}.trigger{width:48px;height:48px;bottom:14px}}',
       '@media (prefers-reduced-motion:reduce){.panel,.scrim,.trigger,.sheet{transition:none !important}}'
     ].join('\n');
   };
@@ -718,10 +718,9 @@ window.A11yWidgetConfig = {
     trigger.addEventListener('click', togglePanel);
     wrap.appendChild(trigger);
 
-    // scrim
+    // scrim (מתווסף ל-wrap בסוף, לפני הפאנל)
     var scrim = el('div', { class: 'scrim' });
     scrim.addEventListener('click', closePanel);
-    wrap.appendChild(scrim);
 
     // panel
     panel = el('div', { class: 'panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('title'), tabindex: '-1' });
@@ -984,8 +983,9 @@ window.A11yWidgetConfig = {
     var needAlt = parts.indexOf('alt') > -1;
     var needShift = parts.indexOf('shift') > -1;
     var needCtrl = parts.indexOf('ctrl') > -1;
+    // השוואה גם מול e.code — עובד גם כשפריסת המקלדת היא עברית (e.key מחזיר אות עברית)
     return (!!e.altKey === needAlt) && (!!e.shiftKey === needShift) && (!!e.ctrlKey === needCtrl) &&
-           (e.key && e.key.toLowerCase() === key);
+           ((e.key && e.key.toLowerCase() === key) || (e.code && e.code.toLowerCase() === 'key' + key));
   }
 
   /* ----------------------------------------------------------------------- *
