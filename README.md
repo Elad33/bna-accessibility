@@ -8,13 +8,11 @@ Hosted accessibility menu for BNA's landing pages, compliant with Israeli law
 Paste into Rav-Messer → **Add element → Advanced › Code (מתקדם › קוד)**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/<USER>/<REPO>@main/bna-a11y.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Elad33/bna-accessibility@main/bna-a11y.min.js" defer></script>
 ```
 
-Replace `<USER>/<REPO>` with this repository's path.
-
 > Tip: for a version you fully control, push a git tag (e.g. `v1.0.0`) and use
-> `.../gh/<USER>/<REPO>@v1.0.0/bna-a11y.min.js`. Branch (`@main`) URLs are CDN-cached;
+> `.../gh/Elad33/bna-accessibility@v1.0.0/bna-a11y.min.js`. Branch (`@main`) URLs are CDN-cached;
 > after pushing an update, purge at https://www.jsdelivr.com/tools/purge.
 
 ## Files
